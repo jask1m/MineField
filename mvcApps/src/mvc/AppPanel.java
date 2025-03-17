@@ -8,20 +8,36 @@ import java.awt.event.*;
 import javax.swing.*;
 
 // AppPanel is the MVC controller
-public class AppPanel extends JPanel implements Subscriber, ActionListener {
+public class AppPanel extends JPanel implements Subscriber, ActionListener  {
 
     protected Model model;
     protected AppFactory factory;
     protected View view;
     protected JPanel controlPanel;
-    private JFrame frame;
+    private final JFrame frame;
     public static int FRAME_WIDTH = 500;
-    public static int FRAME_HEIGHT = 300;
+    public static int FRAME_HEIGHT = 500;
 
     public AppPanel(AppFactory factory) {
+        this.setLayout(new BorderLayout());
 
-        // initialize fields here
+        // Initialize fields
+        this.factory = factory;
+        this.model = factory.makeModel();
 
+        // Create view and add it to the CENTER of the border layout
+        this.view = factory.makeView(model);
+        this.add(view, BorderLayout.CENTER);
+
+        // Set up control panel at the WEST of the border layout
+        controlPanel = new JPanel();
+        controlPanel.setLayout(new BoxLayout(controlPanel, BoxLayout.Y_AXIS));
+        this.add(controlPanel, BorderLayout.WEST);
+
+        // Subscribe to model changes
+        model.subscribe(this);
+
+        // Set up frame
         frame = new SafeFrame();
         Container cp = frame.getContentPane();
         cp.add(this);
@@ -29,6 +45,7 @@ public class AppPanel extends JPanel implements Subscriber, ActionListener {
         frame.setTitle(factory.getTitle());
         frame.setSize(FRAME_WIDTH, FRAME_HEIGHT);
     }
+
 
     public void display() { frame.setVisible(true); }
 
@@ -68,35 +85,35 @@ public class AppPanel extends JPanel implements Subscriber, ActionListener {
         try {
             String cmmd = ae.getActionCommand();
 
-            if (cmmd.equals("Save")) {
-                Utilities.save(model, false);
-            } else if (cmmd.equals("SaveAs")) {
-                Utilities.save(model, true);
-            } else if (cmmd.equals("Open")) {
-                Model newModel = Utilities.open(model);
-                if (newModel != null) setModel(newModel);
-            } else if (cmmd.equals("New")) {
-                Utilities.saveChanges(model);
-                setModel(factory.makeModel());
-                // needed cuz setModel sets to true:
-                model.setUnsavedChanges(false);
-            } else if (cmmd.equals("Quit")) {
-                Utilities.saveChanges(model);
-                System.exit(0);
-            } else if (cmmd.equals("About")) {
-                Utilities.inform(factory.about());
-            } else if (cmmd.equals("Help")) {
-                Utilities.inform(factory.getHelp());
-            } else { // must be from Edit menu
-                //???
+            switch (cmmd) {
+                case "Save" -> Utilities.save(model, false);
+                case "SaveAs" -> Utilities.save(model, true);
+                case "Open" -> {
+                    Model newModel = Utilities.open(model);
+                    if (newModel != null) setModel(newModel);
+                }
+                case "New" -> {
+                    Utilities.saveChanges(model);
+                    setModel(factory.makeModel());
+                    // needed cuz setModel sets to true:
+                    model.setUnsavedChanges(false);
+                }
+                case "Quit" -> {
+                    Utilities.saveChanges(model);
+                    System.exit(0);
+                }
+                case "About" -> Utilities.inform(factory.about());
+                case "Help" -> Utilities.inform(factory.getHelp());
+                default -> {
+                    // handle edit commands using factory
+                    Command command = factory.makeEditCommand(model, ae.getActionCommand(), ae.getSource());
+                    if (command != null) {
+                        command.execute();
+                    }
+                }
             }
         } catch (Exception e) {
-            handleException(e);
+            Utilities.error(e);
         }
     }
-
-    protected void handleException(Exception e) {
-        Utilities.error(e);
-    }
 }
-
