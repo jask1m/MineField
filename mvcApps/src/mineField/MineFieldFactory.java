@@ -25,6 +25,4 @@ public class MineFieldFactory implements AppFactory {
     public String about() {
         return "MineField. Copyright 2025 by Group 6";
     }
-
-
 }
