@@ -15,6 +15,10 @@ public class Cell implements Serializable {
         this.numMinesNearby = numMinesNearby;
     }
 
+    public boolean isMine() {
+        return isMine;
+    }
+
     public void setHasBeenMined(boolean hasBeenMined) {
         this.hasBeenMined = hasBeenMined;
     }
@@ -25,6 +29,13 @@ public class Cell implements Serializable {
 
     public void setLabel(String label) {
         this.label = label;
+    }
+
+    public String updateLabel() {
+        if (!isMine) {
+            return String.valueOf(numMinesNearby);
+        }
+        return "💣";
     }
 
     public String getLabel() {

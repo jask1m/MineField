@@ -8,14 +8,21 @@ import java.util.HashSet;
 import static mineField.MineFieldShape.GRID_DIMENSION;
 
 public class MineField extends Model {
+    /*
+    TODO:
+     [.] throw error when sargent rock steps on a mine
+     [.] highlight the goal cell green
+     [.] when user goes out of bounds, reset
+     [.] update gameWon and throw error if user moves after gameWon
+     */
     private int r = 0, c = 0;
     private final Cell[][] grid;
-    private boolean gameWon;
+    private boolean gameOver;
     static final int PERCENT_MINED = 5;
 
     public MineField() {
         grid = new Cell[GRID_DIMENSION][GRID_DIMENSION];
-        gameWon = false;
+        gameOver = false;
 
         // initialize grid
         initMineField();
@@ -32,41 +39,60 @@ public class MineField extends Model {
     public Color getBorderColor(int r, int c) {
         if (!inBounds(r, c))
             return null;
+        if (reachedEndPosition(r, c))
+            return Color.GREEN;
 
         Cell cell = grid[r][c];
         return cell.getHasBeenMined() ? Color.WHITE : Color.BLACK;
     }
 
     public void move(String direction) throws Exception {
+        if (gameOver) {
+            throw new Exception("Game is over! Please select 'New' from the File Menu");
+        }
+
+        int newR = r;
+        int newC = c;
         switch (direction) {
-            case "N" -> r -= 1;
+            case "N" -> newR -= 1;
             case "NE" -> {
-                r -= 1;
-                c += 1;
+                newR -= 1;
+                newC += 1;
             }
-            case "E" -> c += 1;
+            case "E" -> newC += 1;
             case "SE" -> {
-                r += 1;
-                c += 1;
+                newR += 1;
+                newC += 1;
             }
-            case "S" -> r += 1;
+            case "S" -> newR += 1;
             case "SW" -> {
-                r += 1;
-                c -= 1;
+                newR += 1;
+                newC -= 1;
             }
-            case "W" -> c -= 1;
+            case "W" -> newC -= 1;
             case "NW" -> {
-                r -= 1;
-                c -= 1;
+                newR -= 1;
+                newC -= 1;
             }
             default -> throw new Exception("Invalid direction: " + direction);
         }
-        if (inBounds(r, c)) {
-            revealPosition(r, c);
-        } else {
-            throw new Exception();
+
+        if (!inBounds(newR, newC)) {
+            throw new Exception("Position is out of bounds!");
         }
+
+        r = newR;
+        c = newC;
+        revealPosition(r, c);
         changed();
+        if (reachedEndPosition(r, c)) {
+            gameOver = true;
+        }
+
+        if (grid[r][c].isMine()) {
+            gameOver = true;
+            throw new Exception("Game Over! You have stepped on a Mine!");
+        }
     }
 
     private void initMineField() {
@@ -119,10 +145,14 @@ public class MineField extends Model {
     private void revealPosition(int r, int c) {
         Cell cell = grid[r][c];
         cell.setHasBeenMined(true);
-        cell.setLabel(String.valueOf(cell.getNumMinesNearby()));
+        cell.setLabel(cell.updateLabel());
     }
 
     private boolean inBounds(int r, int c) {
         return 0 <= r && r < GRID_DIMENSION && 0 <= c && c < GRID_DIMENSION;
+    }
+
+    private boolean reachedEndPosition(int r, int c) {
+        return (r == GRID_DIMENSION - 1 && c == GRID_DIMENSION - 1);
     }
 }
