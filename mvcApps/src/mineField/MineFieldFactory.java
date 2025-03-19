@@ -20,7 +20,19 @@ public class MineFieldFactory implements AppFactory {
         return "Mine Field";
     }
     public String[] getHelp() {
-        return new String[] { };
+        return new String[] {
+                "Guide Sargent Rock through a minefield to the bottom-right corner",
+                "The mine detector will tell you how many mines are in the neighboring cells.",
+                "Use the direction buttons to move Sargent Rock.",
+                "NW = North West",
+                "N = North",
+                "NE = North East",
+                "W = West",
+                "E = East",
+                "SW = South West",
+                "S = South",
+                "SE = South East"
+        };
     }
     public String about() {
         return "MineField. Copyright 2025 by Group 6";
