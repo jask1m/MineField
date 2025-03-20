@@ -1,6 +1,5 @@
 package mineField;
 
-import java.awt.*;
 import javax.swing.*;
 import mvc.*;
 
