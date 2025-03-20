@@ -13,8 +13,6 @@ public class MineFieldPanel extends AppPanel{
 
         JPanel p = new JPanel();
 
-        controlPanel.setLayout(new GridLayout(4,2));
-
         p = new JPanel();
         NW = new JButton("NW");
         p.add(NW);
@@ -56,9 +54,6 @@ public class MineFieldPanel extends AppPanel{
         controlPanel.add(p);
 
         setListeners();
-        this.setLayout(new GridLayout(1,2));
-        this.add(controlPanel);
-        this.add(view);
     }
 
     public void setListeners() {

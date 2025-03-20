@@ -15,24 +15,25 @@ public class AppPanel extends JPanel implements Subscriber, ActionListener  {
     protected View view;
     protected JPanel controlPanel;
     private final JFrame frame;
-    public static int FRAME_WIDTH = 500;
-    public static int FRAME_HEIGHT = 500;
+    public static int FRAME_WIDTH = 815;
+    public static int FRAME_HEIGHT = 465;
 
     public AppPanel(AppFactory factory) {
-        this.setLayout(new BorderLayout());
+        this.setLayout(new GridLayout(1,2));
 
         // Initialize fields
         this.factory = factory;
         this.model = factory.makeModel();
 
-        // Create view and add it to the CENTER of the border layout
-        this.view = factory.makeView(model);
-        this.add(view, BorderLayout.CENTER);
-
-        // Set up control panel at the WEST of the border layout
+        // Set up control panel and add it to the LEFT of the grid layout
         controlPanel = new JPanel();
-        controlPanel.setLayout(new BoxLayout(controlPanel, BoxLayout.Y_AXIS));
-        this.add(controlPanel, BorderLayout.WEST);
+        controlPanel.setLayout(new GridLayout(4,2));
+        this.add(controlPanel);
+
+        // Create view and add it to the RIGHT of the grid layout
+        this.view = factory.makeView(model);
+        this.add(view);
+
 
         // Subscribe to model changes
         model.subscribe(this);
