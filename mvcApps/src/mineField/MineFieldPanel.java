@@ -7,39 +7,69 @@ import mvc.*;
 public class MineFieldPanel extends AppPanel{
     private JButton NW, N, NE, W, E, SW, S, SE;
 
+
     public MineFieldPanel(AppFactory factory) {
         super(factory);
+
+        JPanel p = new JPanel();
+
+        controlPanel.setLayout(new GridLayout(4,2));
+
+        p = new JPanel();
         NW = new JButton("NW");
-        NW.addActionListener(this);
-        controlPanel.add(NW);
+        p.add(NW);
+        controlPanel.add(p);
 
+        p = new JPanel();
         N = new JButton("N");
-        N.addActionListener(this);
-        controlPanel.add(N);
+        p.add(N);
+        controlPanel.add(p);
 
+        p = new JPanel();
         NE = new JButton("NE");
-        NE.addActionListener(this);
-        controlPanel.add(NE);
+        p.add(NE);
+        controlPanel.add(p);
 
+        p = new JPanel();
         W = new JButton("W");
-        W.addActionListener(this);
-        controlPanel.add(W);
+        p.add(W);
+        controlPanel.add(p);
 
+        p = new JPanel();
         E = new JButton("E");
-        E.addActionListener(this);
-        controlPanel.add(E);
+        p.add(E);
+        controlPanel.add(p);
 
+        p = new JPanel();
         SW = new JButton("SW");
-        SW.addActionListener(this);
-        controlPanel.add(SW);
+        p.add(SW);
+        controlPanel.add(p);
 
+        p = new JPanel();
         S = new JButton("S");
-        S.addActionListener(this);
-        controlPanel.add(S);
+        p.add(S);
+        controlPanel.add(p);
 
+        p = new JPanel();
         SE = new JButton("SE");
+        p.add(SE);
+        controlPanel.add(p);
+
+        setListeners();
+        this.setLayout(new GridLayout(1,2));
+        this.add(controlPanel);
+        this.add(view);
+    }
+
+    public void setListeners() {
+        NW.addActionListener(this);
+        N.addActionListener(this);
+        NE.addActionListener(this);
+        W.addActionListener(this);
+        E.addActionListener(this);
+        SW.addActionListener(this);
+        S.addActionListener(this);
         SE.addActionListener(this);
-        controlPanel.add(SE);
     }
 
     public static void main(String[] args) {
